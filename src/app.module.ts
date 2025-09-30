@@ -3,6 +3,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { NodeEntity } from './database/node.entity';
 import { GroupsModule } from './modules/groups/groups.module';
+import { UsersModule } from './modules/users/users.module';
+import { NodesModule } from './modules/nodes/nodes.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { GroupsModule } from './modules/groups/groups.module';
       }),
     }),
     GroupsModule,
+    UsersModule,
+    NodesModule,
   ],
   controllers: [],
   providers: [],
