@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { NodeEntity } from './database/node.entity';
+import { GroupsModule } from './modules/groups/groups.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { NodeEntity } from './database/node.entity';
         synchronize: false,
       }),
     }),
+    GroupsModule,
   ],
   controllers: [],
   providers: [],
