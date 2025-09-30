@@ -1,4 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 export enum NodeType {
   USER = 'USER',
@@ -29,4 +35,10 @@ export class NodeEntity {
     nullable: true,
   })
   email?: string;
+
+  @CreateDateColumn({ type: 'timestamp', name: 'created_at', nullable: false })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamp', name: 'updated_at', nullable: true })
+  updatedAt?: Date;
 }
