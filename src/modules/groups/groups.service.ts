@@ -4,6 +4,7 @@ import { Repository, DataSource } from 'typeorm';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { NodeEntity, NodeType } from 'src/database/node.entity';
 import { ClosureEntity } from 'src/database/closure.entity';
+import { NodesService } from '../nodes/nodes.service';
 
 @Injectable()
 export class GroupsService {
@@ -13,10 +14,11 @@ export class GroupsService {
     @InjectRepository(ClosureEntity)
     private readonly closureRepository: Repository<ClosureEntity>,
     private readonly dataSource: DataSource,
+    private readonly nodesService: NodesService,
   ) {}
 
   async create(createGroupDto: CreateGroupDto): Promise<NodeEntity> {
-    const { name } = createGroupDto;
+    const { name, parentId } = createGroupDto;
 
     const groupNode = this.nodeRepository.create({
       name,
@@ -30,13 +32,20 @@ export class GroupsService {
     try {
       await queryRunner.manager.save(groupNode);
 
-      // Criar a relação de auto-referência (depth 0)
       const selfReference = this.closureRepository.create({
         ancestor_id: groupNode.id,
         descendant_id: groupNode.id,
         depth: 0,
       });
       await queryRunner.manager.save(selfReference);
+
+      if (parentId) {
+        await this.nodesService.associateNodeToParent(
+          queryRunner.manager,
+          groupNode.id,
+          parentId,
+        );
+      }
 
       await queryRunner.commitTransaction();
       return groupNode;
