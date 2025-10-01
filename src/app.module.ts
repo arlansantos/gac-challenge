@@ -5,6 +5,7 @@ import { NodeEntity } from './database/node.entity';
 import { GroupsModule } from './modules/groups/groups.module';
 import { UsersModule } from './modules/users/users.module';
 import { NodesModule } from './modules/nodes/nodes.module';
+import { ClosureEntity } from './database/closure.entity';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { NodesModule } from './modules/nodes/nodes.module';
         username: configService.get<string>('DB_USER'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        entities: [NodeEntity],
+        entities: [NodeEntity, ClosureEntity],
         synchronize: false,
       }),
     }),

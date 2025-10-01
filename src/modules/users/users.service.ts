@@ -46,8 +46,8 @@ export class UsersService {
       await queryRunner.manager.save(userNode);
 
       const selfReference = queryRunner.manager.create(ClosureEntity, {
-        ancestor_id: userNode.id,
-        descendant_id: userNode.id,
+        ancestorId: userNode.id,
+        descendantId: userNode.id,
         depth: 0,
       });
       await queryRunner.manager.save(selfReference);

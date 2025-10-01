@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  HttpException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { CreateGroupDto } from './dto/create-group.dto';
@@ -33,8 +37,8 @@ export class GroupsService {
       await queryRunner.manager.save(groupNode);
 
       const selfReference = this.closureRepository.create({
-        ancestor_id: groupNode.id,
-        descendant_id: groupNode.id,
+        ancestorId: groupNode.id,
+        descendantId: groupNode.id,
         depth: 0,
       });
       await queryRunner.manager.save(selfReference);
@@ -49,9 +53,13 @@ export class GroupsService {
 
       await queryRunner.commitTransaction();
       return groupNode;
-    } catch (err) {
+    } catch (error) {
       await queryRunner.rollbackTransaction();
-      throw new InternalServerErrorException('Erro ao criar o grupo.', err);
+
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Erro ao criar o grupo.');
     } finally {
       await queryRunner.release();
     }

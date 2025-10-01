@@ -10,11 +10,11 @@ import { NodeEntity } from './node.entity';
 
 @Entity('closure')
 export class ClosureEntity {
-  @PrimaryColumn('uuid')
-  ancestor_id: string;
+  @PrimaryColumn('uuid', { name: 'ancestor_id' })
+  ancestorId: string;
 
-  @PrimaryColumn('uuid')
-  descendant_id: string;
+  @PrimaryColumn('uuid', { name: 'descendant_id' })
+  descendantId: string;
 
   @ManyToOne(() => NodeEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'ancestor_id' })

@@ -23,9 +23,11 @@ export class NodesService {
     parentId: string,
   ): Promise<void> {
     const parentNode = await manager.findOneBy(NodeEntity, { id: parentId });
+
     if (!parentNode) {
       throw new NotFoundException(`Nó pai com ID ${parentId} não encontrado.`);
     }
+
     if (parentNode.type !== NodeType.GROUP) {
       throw new BadRequestException(
         'Um nó só pode ser associado a um PAI do tipo GRUPO.',
@@ -33,8 +35,8 @@ export class NodesService {
     }
 
     const cycleCheck = await manager.findOneBy(ClosureEntity, {
-      ancestor_id: childId,
-      descendant_id: parentId,
+      ancestorId: childId,
+      descendantId: parentId,
     });
 
     if (cycleCheck) {
