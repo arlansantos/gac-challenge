@@ -3,6 +3,7 @@ import {
   ConflictException,
   InternalServerErrorException,
   NotFoundException,
+  HttpException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
@@ -54,9 +55,12 @@ export class UsersService {
 
       await queryRunner.commitTransaction();
       return userNode;
-    } catch (err) {
+    } catch (error) {
       await queryRunner.rollbackTransaction();
-      throw new InternalServerErrorException('Erro ao criar usuário.', err);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Erro ao criar usuário.');
     } finally {
       await queryRunner.release();
     }
@@ -85,11 +89,13 @@ export class UsersService {
         );
       }
       await queryRunner.commitTransaction();
-    } catch (err) {
+    } catch (error) {
       await queryRunner.rollbackTransaction();
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException(
         'Erro ao associar usuário aos grupos.',
-        err,
       );
     } finally {
       await queryRunner.release();
