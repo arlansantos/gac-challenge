@@ -1,98 +1,104 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# API de Unidades Organizacionais (Closure Table)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+![NestJS](https://img.shields.io/badge/NestJS-%23E0234E.svg?style=for-the-badge&logo=nestjs&logoColor=white)
+![Postgres](https://img.shields.io/badge/PostgreSQL-4169E1.svg?style=for-the-badge&logo=postgresql&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED.svg?style=for-the-badge&logo=docker&logoColor=white)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+API RESTful desenvolvida em **NestJS** e **TypeScript** para gerenciar uma hierarquia de Unidades Organizacionais (usuários e grupos), utilizando o padrão **Closure Table** para consultas de alta performance em um banco de dados **PostgreSQL**.
 
-## Description
+Este projeto foi construído como solução para o desafio técnico do Grupo Adriano Cobuccio, com foco em código limpo, arquitetura modular, performance e observabilidade.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Focos do Projeto
 
-## Project setup
+* **Arquitetura Modular:** A aplicação é estruturada em módulos de funcionalidades (`Users`, `Groups`, `Nodes`), promovendo a separação de responsabilidades e facilitando a manutenção.
+* **Performance com Closure Table:** O coração do projeto é a implementação do padrão *Closure Table* para modelar a hierarquia. Isso permite consultas de ancestralidade e descendência (`ancestors`, `descendants`, `organizations`) com altíssima performance, evitando a necessidade de queries recursivas (`WITH RECURSIVE`) no banco de dados.
+* **Segurança e Consistência:** Todas as operações de escrita que afetam a hierarquia são executadas dentro de transações atômicas (`QueryRunner`), garantindo a integridade dos dados. A lógica inclui validações robustas para prevenir a criação de ciclos na estrutura.
+* **Tipagem Estrita:** O código é 100% tipado, utilizando DTOs para validação de entrada e `interfaces`/`types` para garantir a segurança de tipos em toda a aplicação.
 
-```bash
-$ npm install
-```
+## Tech Stack
 
-## Compile and run the project
+* **Framework:** NestJS
+* **Linguagem:** TypeScript
+* **Banco de Dados:** PostgreSQL
+* **ORM:** TypeORM
+* **Containerização:** Docker & Docker Compose
 
-```bash
-# development
-$ npm run start
+## Como Executar o Projeto
 
-# watch mode
-$ npm run start:dev
+Siga os passos abaixo para executar a aplicação e todas as suas dependências em um ambiente local containerizado.
 
-# production mode
-$ npm run start:prod
-```
+### Pré-requisitos
 
-## Run tests
+* [Docker](https://www.docker.com/get-started/)
+* [Docker Compose](https://docs.docker.com/compose/install/)
+* [Node.js](https://nodejs.org/) (para a CLI do NestJS e scripts)
+* [Git](https://git-scm.com/)
+
+### 1. Clonar o Repositório
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+git clone <URL_DO_SEU_REPOSITORIO>
+cd <NOME_DA_PASTA>
 ```
 
-## Deployment
+### 2. Configurar Variáveis de Ambiente
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Crie uma cópia do arquivo de exemplo `.env.example` e renomeie para `.env`. Os valores padrão já estão configurados para funcionar com o `docker-compose.yaml`.
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+cp .env.example .env
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 3. Subir os Containers
 
-## Resources
+Execute o comando abaixo para construir as imagens e iniciar os containers da API, do banco de dados e do Adminer (gerenciador de banco de dados web).
 
-Check out a few resources that may come in handy when working with NestJS:
+```bash
+docker-compose up -d
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+* A API estará disponível em `http://localhost:3000`.
+* O banco de dados estará acessível na porta `5432`.
+* O Adminer estará disponível em `http://localhost:8080`.
 
-## Support
+### 4. Rodar as Migrations
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Com os containers em execução, aplique as migrations para criar a estrutura de tabelas no banco de dados.
 
-## Stay in touch
+```bash
+npm run migration:run
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Pronto! A aplicação está no ar e pronta para receber requisições.
 
-## License
+## Executando os Testes do Desafio
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Para validar a API com os testes de integração e carga fornecidos no repositório do desafio:
+
+1.  **Clone o repositório do desafio** e siga as instruções de instalação das dependências Python (`pip install -r requirements.txt`).
+2.  **Exporte a variável de ambiente `BASE_URL`**:
+    ```bash
+    export BASE_URL="http://localhost:3000"
+    ```
+3.  **Execute os testes de integração (pytest)**:
+    ```bash
+    pytest -v
+    ```
+4.  **Execute os testes de carga (locust)**:
+    ```bash
+    locust -f locustfile.py --headless -u 30 -r 5 -t 1m --host "$BASE_URL"
+    ```
+
+## Documentação da API
+
+| Método | Rota                                       | Descrição                                                                      |
+| :----- | :----------------------------------------- | :------------------------------------------------------------------------------- |
+| `POST` | `/users`                                   | Cria um novo usuário.                                                            |
+| `POST` | `/groups`                                  | Cria um novo grupo, opcionalmente associado a um `parentId`.                     |
+| `POST` | `/users/:id/groups`                        | Associa um usuário existente a um ou mais grupos.                                |
+| `GET`  | `/users/:id/organizations`                 | Lista todas as organizações (grupos) de um usuário, diretas e herdadas, ordenadas por `depth`. |
+| `GET`  | `/nodes/:id/ancestors`                     | Lista todos os ancestrais de um nó (usuário ou grupo), com `depth >= 1`.         |
+| `GET`  | `/nodes/:id/descendants`                   | Lista todos os descendentes de um nó (usuário ou grupo), com `depth >= 1`.       |
+
+---
