@@ -11,12 +11,15 @@ import { NodeEntity, NodeType } from 'src/database/node.entity';
 import { ClosureEntity } from 'src/database/closure.entity';
 import { AssociateGroupsDto } from './dto/associate-groups.dto';
 import { NodesService } from '../nodes/nodes.service';
+import { NodeRelationDto } from '../nodes/dto/node-relation.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(NodeEntity)
     private readonly nodeRepository: Repository<NodeEntity>,
+    @InjectRepository(ClosureEntity)
+    private readonly closureRepository: Repository<ClosureEntity>,
     private readonly dataSource: DataSource,
     private readonly nodesService: NodesService,
   ) {}
@@ -91,5 +94,26 @@ export class UsersService {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  async findOrganizations(userId: string): Promise<NodeRelationDto[]> {
+    const user = await this.nodeRepository.findOneBy({
+      id: userId,
+      type: NodeType.USER,
+    });
+
+    if (!user) {
+      throw new NotFoundException(`Usuário com ID ${userId} não encontrado.`);
+    }
+
+    return await this.closureRepository
+      .createQueryBuilder('closure')
+      .innerJoin('closure.ancestor', 'node')
+      .where('closure.descendant_id = :userId', { userId })
+      .andWhere('closure.depth > 0')
+      .andWhere('node.type = :type', { type: NodeType.GROUP })
+      .orderBy('closure.depth', 'ASC')
+      .select(['node.id as id', 'node.name as name', 'closure.depth as depth'])
+      .getRawMany();
   }
 }

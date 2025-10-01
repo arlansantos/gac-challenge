@@ -6,6 +6,7 @@ import {
   ParseUUIDPipe,
   HttpCode,
   HttpStatus,
+  Get,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -27,5 +28,10 @@ export class UsersController {
     @Body() associateGroupsDto: AssociateGroupsDto,
   ) {
     return await this.usersService.associateToGroups(id, associateGroupsDto);
+  }
+
+  @Get(':id/organizations')
+  async findOrganizations(@Param('id', ParseUUIDPipe) id: string) {
+    return await this.usersService.findOrganizations(id);
   }
 }
