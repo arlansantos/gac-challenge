@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   Column,
   CreateDateColumn,
@@ -13,9 +14,11 @@ export enum NodeType {
 
 @Entity('nodes')
 export class NodeEntity {
+  @ApiProperty()
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @ApiProperty({ enum: NodeType })
   @Column({
     type: 'enum',
     enum: NodeType,
@@ -23,12 +26,14 @@ export class NodeEntity {
   })
   type: NodeType;
 
+  @ApiProperty()
   @Column({
     type: 'varchar',
     nullable: false,
   })
   name: string;
 
+  @ApiPropertyOptional()
   @Column({
     type: 'varchar',
     unique: true,
@@ -36,9 +41,11 @@ export class NodeEntity {
   })
   email?: string;
 
+  @ApiProperty()
   @CreateDateColumn({ type: 'timestamp', name: 'created_at', nullable: false })
   createdAt: Date;
 
+  @ApiPropertyOptional()
   @UpdateDateColumn({ type: 'timestamp', name: 'updated_at', nullable: true })
   updatedAt?: Date;
 }
