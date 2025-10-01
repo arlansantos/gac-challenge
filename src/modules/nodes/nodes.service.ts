@@ -6,11 +6,16 @@ import {
 } from '@nestjs/common';
 import { ClosureEntity } from 'src/database/closure.entity';
 import { NodeEntity, NodeType } from 'src/database/node.entity';
-import { DataSource, EntityManager } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
+import { NodeRelationDto } from './dto/node-relation.dto';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class NodesService {
-  constructor(private readonly dataSource: DataSource) {}
+  constructor(
+    @InjectRepository(ClosureEntity)
+    private readonly closureRepository: Repository<ClosureEntity>,
+  ) {}
 
   async associateNodeToParent(
     manager: EntityManager,
@@ -56,5 +61,37 @@ export class NodesService {
       `,
       [parentId, childId],
     );
+  }
+
+  async findAncestors(nodeId: string): Promise<NodeRelationDto[]> {
+    return await this.closureRepository
+      .createQueryBuilder('closure')
+      .innerJoinAndSelect('closure.ancestor', 'node')
+      .where('closure.descendant_id = :nodeId', { nodeId })
+      .andWhere('closure.depth > 0')
+      .orderBy('closure.depth', 'ASC')
+      .select([
+        'node.id as id',
+        'node.type as type',
+        'node.name as name',
+        'closure.depth as depth',
+      ])
+      .getRawMany();
+  }
+
+  async findDescendants(nodeId: string): Promise<NodeRelationDto[]> {
+    return await this.closureRepository
+      .createQueryBuilder('closure')
+      .innerJoinAndSelect('closure.descendant', 'node')
+      .where('closure.ancestor_id = :nodeId', { nodeId })
+      .andWhere('closure.depth > 0')
+      .orderBy('closure.depth', 'ASC')
+      .select([
+        'node.id as id',
+        'node.type as type',
+        'node.name as name',
+        'closure.depth as depth',
+      ])
+      .getRawMany();
   }
 }
