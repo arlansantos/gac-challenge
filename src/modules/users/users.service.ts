@@ -10,7 +10,7 @@ import { Repository, DataSource } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { NodeEntity, NodeType } from 'src/database/node.entity';
 import { ClosureEntity } from 'src/database/closure.entity';
-import { AssociateGroupsDto } from './dto/associate-groups.dto';
+import { AssociateGroupDto } from './dto/associate-group.dto';
 import { NodesService } from '../nodes/nodes.service';
 import { NodeRelationDto } from '../nodes/dto/node-relation.dto';
 
@@ -67,9 +67,9 @@ export class UsersService {
   }
   async associateToGroups(
     userId: string,
-    associateGroupsDto: AssociateGroupsDto,
+    associateGroupDto: AssociateGroupDto,
   ): Promise<void> {
-    const { groups } = associateGroupsDto;
+    const { groupId } = associateGroupDto;
 
     const user = await this.nodeRepository.findOneBy({ id: userId });
     if (!user) {
@@ -81,13 +81,12 @@ export class UsersService {
     await queryRunner.startTransaction();
 
     try {
-      for (const groupId of groups) {
-        await this.nodesService.associateNodeToParent(
-          queryRunner.manager,
-          userId,
-          groupId,
-        );
-      }
+      await this.nodesService.associateNodeToParent(
+        queryRunner.manager,
+        userId,
+        groupId,
+      );
+
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();

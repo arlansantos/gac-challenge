@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { AssociateGroupsDto } from './dto/associate-groups.dto';
+import { AssociateGroupDto } from './dto/associate-group.dto';
 
 @Controller('users')
 export class UsersController {
@@ -25,9 +25,9 @@ export class UsersController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async associateToGroups(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() associateGroupsDto: AssociateGroupsDto,
+    @Body() associateGroupDto: AssociateGroupDto,
   ) {
-    return await this.usersService.associateToGroups(id, associateGroupsDto);
+    return await this.usersService.associateToGroups(id, associateGroupDto);
   }
 
   @Get(':id/organizations')
